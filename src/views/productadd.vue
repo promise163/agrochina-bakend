@@ -21,7 +21,7 @@
             <el-option label="Plant Growth Regulator" value="5"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="产品展示优先级" prop="productLevel">
+      <el-form-item label="产品展示优先级" prop="productLevel" required>
         <el-input v-model="ruleForm.productLevel" />
       </el-form-item>
       <el-form-item label="简述" prop="description" required>
@@ -79,9 +79,11 @@ interface RuleForm {
     productType:string;
     productLevel:string;
     description: string;
-    author: string;
+    createBy:string;
+    author?: string;
     status: number;
     coverImgUrl: string;
+    content:string;
 }
 
 const uploadRefs = ref<UploadInstance>()
@@ -105,12 +107,18 @@ const ruleForm = reactive<RuleForm>({
 
 const rules = reactive<FormRules<RuleForm>>({
     title: [
-        { required: true, message: "请输入标题",}
+        { required: true, message: "请输入标题",trigger: "blur" }
+    ],
+    productType: [
+        { required: true, message: "请选择产品类型",trigger: "change" }
+    ],
+    productLevel:[
+        { required: true, message: "请输入优先级",trigger: "blur"}
     ],
     description: [
         {
         required: true,
-        message: "请输入新闻简述",
+        message: "请输入产品描述",
         trigger: "blur" 
         }
     ],
@@ -142,6 +150,12 @@ const requestImage = (files)=>{
 		}
 	});
 }
+const resetForm = () => {
+  if (!ruleFormRef.value) return;
+  ruleFormRef.value.resetFields();
+  ruleForm.coverImgUrl = ''
+  instance.txt.html('')
+};
 
 const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
@@ -154,19 +168,13 @@ const submitForm = async (formEl: FormInstance | undefined) => {
         res = res.data
         if(res.code == '0'){
           ElMessage.success('保存成功')
-          resetForm(ruleFormRef)
+          resetForm()
         }
       });
     } else {
       console.log("error submit!", fields);
     }
   });
-};
-
-const resetForm = (formEl: FormInstance | undefined) => {
-  if (!formEl) return;
-  formEl.resetFields();
-  instance.txt.html('')
 };
 
 

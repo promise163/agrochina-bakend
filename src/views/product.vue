@@ -9,6 +9,15 @@
 							<el-option label="未发布" value="2"></el-option>
 						</el-select>
 					</el-form-item>
+					<el-form-item label="产品类型" class="handle-select mr10">
+						<el-select v-model="query.productType" placeholder="" clearable>
+							<el-option label="Herbicide" value="1"></el-option>
+							<el-option label="Insecticide" value="2"></el-option>
+							<el-option label="Fungicide" value="3"></el-option>
+							<el-option label="Rodenticide" value="4"></el-option>
+							<el-option label="Plant Growth Regulator" value="5"></el-option>
+						</el-select>
+					</el-form-item>
 					<el-form-item>
 						<el-button type="primary" :icon="Search" @click="handleSearch">查询</el-button>
 					</el-form-item>
@@ -49,7 +58,7 @@
 					</template>
 				</el-table-column>
 
-				<el-table-column prop="createTime" label="发布时间"></el-table-column>
+				<!-- <el-table-column prop="createTime" label="发布时间"></el-table-column> -->
 				<el-table-column label="操作" width="220" align="center">
 					<template #default="scope">
 						<el-button text :icon="scope.row.status=='1'?Download:Upload"  :class="scope.row.status=='1'?'blue':'green'" @click="handleEdit(scope.row)" v-permiss="15">
@@ -110,6 +119,7 @@ interface TableItem {
 
 const query = reactive({
 	status: '',
+	productType:'',
 	type:2,
 	pageNum: 1,
 	pageSize: 10
