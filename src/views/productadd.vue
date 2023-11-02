@@ -32,7 +32,9 @@
             ref="uploadRefs"
             class="avatar-uploader"
             action=""
-            :show-file-list="false"
+            :limit="3"
+            list-type="picture-card"
+            :show-file-list="true"
             :on-success="handleAvatarSuccess"
             :auto-upload="false"
             :on-change="onChange"
@@ -40,8 +42,9 @@
             :before-upload="beforeAvatarUpload"
             :http-request="requestImage"
         >
-            <img v-if="ruleForm.coverImgUrl" :src="ruleForm.coverImgUrl" class="avatar" />
-            <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
+            <!-- <img v-if="ruleForm.coverImgUrl" :src="ruleForm.coverImgUrl" class="avatar" />
+            <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon> -->
+            <el-icon  class="avatar-uploader-icon"><Plus /></el-icon>
         </el-upload>
         <!-- <el-input v-model="ruleForm.coverImgUrl" /> -->
       </el-form-item>
@@ -137,6 +140,7 @@ const onError = ()=>{
 const onChange:UploadProps['onChange'] = (file)=>{
   if(file.status == 'ready'){
     uploadRefs.value!.submit()
+    uploadRef.value!.clearFiles()
   }
 }
 
@@ -231,12 +235,5 @@ onBeforeUnmount(() => {
 .mr10 {
     margin-right: 10px;
 }
-.avatar-uploader :deep(.el-upload){
-    min-width: 200px;
-    min-height: 200px;
-    border: 1px solid #dcdfe6;
-    .avatar{
-      height:100%;
-    }
-}
+
 </style>

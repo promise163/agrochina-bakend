@@ -20,6 +20,8 @@
             ref="uploadRef"
             class="avatar-uploader"
             action=""
+            :limit="1"
+            :on-exceed="handleExceed"
             :show-file-list="false"
             :on-success="handleAvatarSuccess"
             :auto-upload="false"
@@ -56,6 +58,7 @@
 </template>
 
 <script setup lang="ts" name="import">
+import {genFileId} from 'element-plus'
 import type { UploadProps, UploadUserFile,UploadInstance ,FormInstance, FormRules} from 'element-plus'
 import { ref, reactive, onMounted, onBeforeUnmount } from 'vue';
 import WangEditor from 'wangeditor';
@@ -108,6 +111,7 @@ const onError = ()=>{
 const onChange:UploadProps['onChange'] = (file)=>{
   if(file.status == 'ready'){
     uploadRef.value!.submit()
+    uploadRef.value!.clearFiles()
   }
 }
 
@@ -121,6 +125,13 @@ const requestImage = (files)=>{
       console.log(ruleForm.coverImgUrl,'ruleForm.coverImgUrl')
 		}
 	});
+}
+// 超出图片限制
+const handleExceed: UploadProps['onExceed'] = (files) => {
+  uploadRef.value!.clearFiles()
+  const file = files[0] as UploadRawFile
+  file.uid = genFileId()
+  uploadRef.value!.handleStart(file)
 }
 
 const submitForm = async (formEl: FormInstance | undefined) => {
