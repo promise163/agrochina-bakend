@@ -32,6 +32,7 @@
             ref="uploadRefs"
             class="avatar-uploader"
             action=""
+            v-model:file-list="fileList"
             :limit="3"
             list-type="picture-card"
             :show-file-list="true"
@@ -90,6 +91,7 @@ interface RuleForm {
 }
 
 const uploadRefs = ref<UploadInstance>()
+const fileList = ref<UploadUserFile[]>([])
 
 const editor = ref(null);
 let instance: any;
