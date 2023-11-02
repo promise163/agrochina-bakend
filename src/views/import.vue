@@ -62,8 +62,6 @@ import WangEditor from 'wangeditor';
 import { fetchUpload ,fetchContentSave} from '../api/index';
 
 
-import type {  } from "element-plus";
-
 interface RuleForm {
     title: string;
     type:string;
