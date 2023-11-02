@@ -37,7 +37,7 @@
         <el-switch
             v-model="ruleForm.status"
             :active-value="1"
-            :inactive-value="0"
+            :inactive-value="2"
             active-text="发布"
             inactive-text="下架"
         />
@@ -119,7 +119,8 @@ const requestImage = (files)=>{
   fetchUpload(foramData).then(res => {
     res = res.data
 		if(res.code == "0"){
-			ruleForm.coverImgUrl = res.data
+			ruleForm.coverImgUrl = import.meta.env.VITE_APP_IMAGE_URL+ '/assets/images/' +  res.data
+      console.log(ruleForm.coverImgUrl,'ruleForm.coverImgUrl')
 		}
 	});
 }
@@ -178,7 +179,7 @@ onMounted(() => {
     fetchUpload(foramData).then(res => {
       res = res.data
       if(res.code == "0"){
-        insertImgFn(res.data)
+        insertImgFn( import.meta.env.VITE_APP_IMAGE_URL+ '/assets/images/' + res.data)
       }
     });
   }  //resultFiles 表示上传的所有图片的文件说明，可以循环并使用 insertImgFn 实现图片的插入

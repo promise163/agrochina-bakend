@@ -32,6 +32,32 @@ export const fetchNewsList = (data:any)=>{
     });
 }
 
+// id查询新闻产品
+export const fetchNewsDetail = (id:any)=>{
+    return request({
+        url: '/news/'+id,
+        method: 'get'
+    });
+}
+
+// 上下架新闻产品
+export const fetchNewsStatus = (data:any)=>{
+    return request({
+        url: '/news/update',
+        method: 'put',
+        data
+    });
+}
+
+// 删除新闻产品
+export const fetchNewsDetele = (id:any)=>{
+    return request({
+        url: '/news/del',
+        method: 'get',
+        params:{id}
+    });
+}
+
 // 图片上传
 export const fetchUpload = (data:any)=>{
     return request({

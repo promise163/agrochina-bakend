@@ -4,9 +4,9 @@
 			<div class="handle-box">
 				<el-form  :inline="true" :model="query">
 					<el-form-item label="状态" class="handle-select mr10">
-						<el-select v-model="query.status" placeholder="">
+						<el-select v-model="query.status" placeholder="" clearable>
 							<el-option label="已发布" value="1"></el-option>
-							<el-option label="未发布" value="0"></el-option>
+							<el-option label="未发布" value="2"></el-option>
 						</el-select>
 					</el-form-item>
 					<el-form-item>
@@ -52,10 +52,10 @@
 				<el-table-column prop="createTime" label="发布时间"></el-table-column>
 				<el-table-column label="操作" width="220" align="center">
 					<template #default="scope">
-						<el-button text :icon="scope.row.status=='1'?Download:Upload"  :class="scope.row.status=='1'?'blue':'green'" @click="handleEdit(scope.$index, scope.row)" v-permiss="15">
+						<el-button text :icon="scope.row.status=='1'?Download:Upload"  :class="scope.row.status=='1'?'blue':'green'" @click="handleEdit(scope.row)" v-permiss="15">
 							{{scope.row.status == '1' ? '下架' : '发布'}}
 						</el-button>
-						<el-button text :icon="Delete" class="red" @click="handleDelete(scope.$index)" v-permiss="16">
+						<el-button text :icon="Delete" class="red" @click="handleDelete(scope.row.id)" v-permiss="16">
 							删除
 						</el-button>
 					</template>
@@ -65,7 +65,7 @@
 				<el-pagination
 					background
 					layout="total, prev, pager, next"
-					:current-page="query.pageIndex"
+					:current-page="query.pageNum"
 					:page-size="query.pageSize"
 					:total="total"
 					@current-change="handlePageChange"
@@ -98,7 +98,7 @@
 import { ref, reactive } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Delete, Edit, Search, Plus ,Download,Upload} from '@element-plus/icons-vue';
-import { fetchNewsList } from '../api/index';
+import { fetchNewsList ,fetchNewsDetele ,fetchNewsStatus } from '../api/index';
 
 interface TableItem {
 	title: string;
@@ -110,8 +110,8 @@ interface TableItem {
 
 const query = reactive({
 	status: '',
-	type:'2',
-	pageIndex: 1,
+	type:2,
+	pageNum: 1,
 	pageSize: 10
 });
 const tableData = ref<TableItem[]>([]);
@@ -126,24 +126,31 @@ const getData = () => {
 };
 // 查询操作
 const handleSearch = () => {
-	query.pageIndex = 1;
+	query.pageNum = 1;
 	getData();
 };
 // 分页导航
 const handlePageChange = (val: number) => {
-	query.pageIndex = val;
+	query.pageNum = val;
 	getData();
 };
 
 // 删除操作
-const handleDelete = (index: number) => {
+const handleDelete = (id: number) => {
 	// 二次确认删除
 	ElMessageBox.confirm('确定要删除吗？', '提示', {
 		type: 'warning'
 	})
 		.then(() => {
-			ElMessage.success('删除成功');
-			tableData.value.splice(index, 1);
+			fetchNewsDetele(id).then(res=>{
+				res = res.data
+				if(res.code == '0'){
+					ElMessage.success('删除成功');
+					handleSearch()
+				}else{
+					ElMessage.success('删除失败');
+				}
+			})
 		})
 		.catch(() => {});
 };
@@ -154,11 +161,17 @@ let form = reactive({
 	name: '',
 	address: ''
 });
-let idx: number = -1;
-const handleEdit = (index: number, row: any) => {
-	// 新闻状态改变
-	idx = index;
-	
+const handleEdit = (row: any) => {
+	// 产品状态改变
+	fetchNewsStatus({id:row.id,status:row.status ==1?2:1,type:2}).then(res=>{
+		res = res.data
+		if(res.code == '0'){
+			ElMessage.success('更新成功');
+			handleSearch()
+		}else{
+			ElMessage.success('更新失败');
+		}
+	})
 };
 const saveEdit = () => {
 	editVisible.value = false;

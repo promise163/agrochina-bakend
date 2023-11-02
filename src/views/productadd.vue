@@ -49,7 +49,7 @@
         <el-switch
             v-model="ruleForm.status"
             :active-value="1"
-            :inactive-value="0"
+            :inactive-value="2"
             active-text="发布"
             inactive-text="下架"
         />
@@ -128,7 +128,6 @@ const onError = ()=>{
 
 const onChange:UploadProps['onChange'] = (file)=>{
   if(file.status == 'ready'){
-    console.log(uploadRefs.value,'uploadRefs.value')
     uploadRefs.value!.submit()
   }
 }
@@ -139,7 +138,7 @@ const requestImage = (files)=>{
   fetchUpload(foramData).then(res => {
     res = res.data
 		if(res.code == "0"){
-			ruleForm.coverImgUrl = res.data
+			ruleForm.coverImgUrl = import.meta.env.VITE_APP_IMAGE_URL+ '/assets/images/' +  res.data
 		}
 	});
 }
@@ -148,7 +147,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   await formEl.validate((valid, fields) => {
     if (valid) {
-      if(!instance.txt.html()) return ElMessage.error('请输入新闻内容')
+      if(!instance.txt.html()) return ElMessage.error('请输入产品内容')
       ruleForm.content = instance.txt.html()
       console.log(ruleForm,instance.txt.html(),"submit!");
       fetchContentSave(ruleForm).then(res => {
@@ -167,7 +166,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 const resetForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   formEl.resetFields();
-  instance.clear()
+  instance.txt.html('')
 };
 
 
@@ -198,7 +197,7 @@ onMounted(() => {
     fetchUpload(foramData).then(res => {
       res = res.data
       if(res.code == "0"){
-        insertImgFn(res.data)
+        insertImgFn( import.meta.env.VITE_APP_IMAGE_URL+ '/assets/images/' + res.data)
       }
     });
   }  //resultFiles 表示上传的所有图片的文件说明，可以循环并使用 insertImgFn 实现图片的插入
